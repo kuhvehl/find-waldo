@@ -1,0 +1,14 @@
+.App {
+  display: grid;
+  grid-template-rows: auto 1fr auto; /* Header, Content, Footer */
+  height: 100vh; /* Full viewport height */
+  justify-items: center; /* Center items horizontally */
+  align-items: center; /* Center items vertically */
+  text-align: center; /* Center text alignment */
+  padding: 20px; /* Optional: add padding around the content */
+}
+
+header,
+footer {
+  width: 100%; /* Ensure header and footer take full width */
+}

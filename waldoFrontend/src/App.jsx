@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Game from "./pages/Game";
+import "/src/assets/App.css";
 
 function App() {
   return (

@@ -1,39 +1,70 @@
 import { useState } from "react";
 import CharacterList from "./CharacterList";
 
+const characterCoordinates = {
+  Sauron: { x: 7, y: 8 },
+  Frodo: { x: 77, y: 37 },
+  Nazgûl: { x: 50, y: 14 },
+};
+
 const GameBoard = () => {
   const [selectedCoordinates, setSelectedCoordinates] = useState(null);
   const [showCharacterList, setShowCharacterList] = useState(false);
+  const [validationMessage, setValidationMessage] = useState("");
 
-  const characters = ["Sauron", "Frodo", "Nazgûl"];
+  const characters = Object.keys(characterCoordinates);
 
   const handleImageClick = (event) => {
-    const rect = event.target.getBoundingClientRect();
+    const img = event.target;
+    const rect = img.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
-    setSelectedCoordinates({ x, y });
+
+    const xPercent = (x / rect.width) * 100;
+    const yPercent = (y / rect.height) * 100;
+
+    setSelectedCoordinates({ xPercent, yPercent });
     setShowCharacterList(true);
+    setValidationMessage("");
   };
 
   const handleCharacterSelect = (character) => {
     console.log(
-      `Selected character: ${character} at coordinates:`,
+      `Selected character: ${character} at normalized coordinates:`,
       selectedCoordinates
     );
-    // Here you would typically send this data to your backend for validation
+
+    const correctCoordinates = characterCoordinates[character];
+
+    if (
+      selectedCoordinates &&
+      Math.abs(selectedCoordinates.xPercent - correctCoordinates.x) < 10 &&
+      Math.abs(selectedCoordinates.yPercent - correctCoordinates.y) < 10
+    ) {
+      setValidationMessage("Correct! You found the character.");
+    } else {
+      setValidationMessage("Incorrect! Try again.");
+    }
+
     setShowCharacterList(false);
+    setSelectedCoordinates(null);
+
+    // Optionally, you could also reset after a few seconds
+    setTimeout(() => {
+      setValidationMessage("");
+    }, 2000);
   };
 
   const handleCancel = () => {
     setShowCharacterList(false);
-    setSelectedCoordinates(null); // Hide the red circle as well
+    setSelectedCoordinates(null);
   };
 
   return (
     <div className="game-board" style={{ position: "relative" }}>
       <img
         src="/src/assets/find-sauron.jpeg"
-        alt="Where's Waldo"
+        alt="Find Sauron"
         onClick={handleImageClick}
         style={{ cursor: "crosshair", maxWidth: "100%" }}
       />
@@ -41,8 +72,8 @@ const GameBoard = () => {
         <div
           style={{
             position: "absolute",
-            left: `${selectedCoordinates.x - 25}px`,
-            top: `${selectedCoordinates.y - 25}px`,
+            left: `calc(${selectedCoordinates.xPercent}% - 25px)`,
+            top: `calc(${selectedCoordinates.yPercent}% - 25px)`,
             width: "50px",
             height: "50px",
             border: "2px solid red",
@@ -58,11 +89,31 @@ const GameBoard = () => {
           onCancel={handleCancel}
           style={{
             position: "absolute",
-            left: `${selectedCoordinates.x + 30}px`,
-            top: `${selectedCoordinates.y + 30}px`,
+            left: `calc(${selectedCoordinates.xPercent}% + 30px)`,
+            top: `calc(${selectedCoordinates.yPercent}% + 30px)`,
             zIndex: 1000,
           }}
         />
+      )}
+      {validationMessage && (
+        <div
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)", // Center the message
+            backgroundColor: "white",
+            borderRadius: "8px",
+            padding: "10px 15px",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+            fontSize: "18px",
+            fontWeight: "bold",
+            zIndex: 1000, // Ensure it's on top of other elements
+            textAlign: "center", // Center the text
+          }}
+        >
+          {validationMessage}
+        </div>
       )}
     </div>
   );
