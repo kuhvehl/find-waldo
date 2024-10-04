@@ -1,14 +1,59 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
 generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+model User {
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  email        String?       @unique
+  score        Int
+  createdAt    DateTime      @default(now())
+  gameSessions GameSession[]
+}
+
+model Character {
+  id                  Int                   @id @default(autoincrement())
+  name                String                @unique
+  imageUrl            String
+  locations           Location[]
+  characterSelections CharacterSelection[]
+}
+
+model Location {
+  id          Int       @id @default(autoincrement())
+  character   Character @relation(fields: [characterId], references: [id])
+  characterId Int
+  x           Float
+  y           Float
+  radius      Float
+
+  @@unique([characterId, x, y])
+}
+
+model GameSession {
+  id                  Int                   @id @default(autoincrement())
+  user                User                  @relation(fields: [userId], references: [id])
+  userId              Int
+  startTime           DateTime              @default(now())
+  endTime             DateTime?
+  duration            Int?
+  completed           Boolean               @default(false)
+  characterSelections CharacterSelection[]
+}
+
+model CharacterSelection {
+  id            Int         @id @default(autoincrement())
+  gameSession   GameSession @relation(fields: [gameSessionId], references: [id])
+  gameSessionId Int
+  character     Character   @relation(fields: [characterId], references: [id])
+  characterId   Int
+  isCorrect     Boolean
+  selectedAt    DateTime    @default(now())
+
+  @@unique([gameSessionId, characterId])
 }
