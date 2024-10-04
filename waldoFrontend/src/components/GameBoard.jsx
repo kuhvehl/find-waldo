@@ -1,13 +1,27 @@
 import { useState } from "react";
+import CharacterList from "./CharacterList";
 
 const GameBoard = () => {
   const [selectedCoordinates, setSelectedCoordinates] = useState(null);
+  const [showCharacterList, setShowCharacterList] = useState(false);
+
+  const characters = ["Sauron", "Frodo", "Nazgûl"];
 
   const handleImageClick = (event) => {
     const rect = event.target.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
     setSelectedCoordinates({ x, y });
+    setShowCharacterList(true);
+  };
+
+  const handleCharacterSelect = (character) => {
+    console.log(
+      `Selected character: ${character} at coordinates:`,
+      selectedCoordinates
+    );
+    // Here you would typically send this data to your backend for validation
+    setShowCharacterList(false);
   };
 
   return (
@@ -29,6 +43,18 @@ const GameBoard = () => {
             border: "2px solid red",
             borderRadius: "50%",
             pointerEvents: "none",
+          }}
+        />
+      )}
+      {showCharacterList && (
+        <CharacterList
+          characters={characters}
+          onSelectCharacter={handleCharacterSelect}
+          style={{
+            position: "absolute",
+            left: `${selectedCoordinates.x + 30}px`,
+            top: `${selectedCoordinates.y + 30}px`,
+            zIndex: 1000,
           }}
         />
       )}
