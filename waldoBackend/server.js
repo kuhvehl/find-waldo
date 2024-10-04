@@ -11,9 +11,9 @@ app.use(bodyParser.json());
 // Temporary storage for character locations
 // In a real app, this would come from a database
 const characterLocations = {
-  Waldo: { x: 0.5, y: 0.5, radius: 0.05 },
-  Wizard: { x: 0.2, y: 0.7, radius: 0.05 },
-  Wilma: { x: 0.8, y: 0.3, radius: 0.05 },
+  Sauron: { x: 7, y: 8, radius: 5 }, // Add radius
+  Frodo: { x: 77, y: 37, radius: 5 }, // Add radius
+  Nazgûl: { x: 50, y: 14, radius: 5 }, // Add radius
 };
 
 app.post("/api/validate", (req, res) => {

@@ -1,10 +1,11 @@
 import { useState } from "react";
 import CharacterList from "./CharacterList";
+import { validateSelection } from "../utils/api";
 
 const characterCoordinates = {
-  Sauron: { x: 7, y: 8 },
-  Frodo: { x: 77, y: 37 },
-  Nazgûl: { x: 50, y: 14 },
+  Sauron: "",
+  Frodo: "",
+  Nazgûl: "",
 };
 
 const GameBoard = () => {
@@ -28,22 +29,27 @@ const GameBoard = () => {
     setValidationMessage("");
   };
 
-  const handleCharacterSelect = (character) => {
+  const handleCharacterSelect = async (character) => {
     console.log(
       `Selected character: ${character} at normalized coordinates:`,
       selectedCoordinates
     );
 
-    const correctCoordinates = characterCoordinates[character];
-
-    if (
-      selectedCoordinates &&
-      Math.abs(selectedCoordinates.xPercent - correctCoordinates.x) < 10 &&
-      Math.abs(selectedCoordinates.yPercent - correctCoordinates.y) < 10
-    ) {
-      setValidationMessage("Correct! You found the character.");
-    } else {
-      setValidationMessage("Incorrect! Try again.");
+    if (selectedCoordinates) {
+      try {
+        const response = await validateSelection(
+          character,
+          selectedCoordinates
+        );
+        if (response.isCorrect) {
+          setValidationMessage("Correct! You found the character.");
+        } else {
+          setValidationMessage("Incorrect! Try again.");
+        }
+      } catch (error) {
+        console.log(error);
+        setValidationMessage("Error validating selection.");
+      }
     }
 
     setShowCharacterList(false);
