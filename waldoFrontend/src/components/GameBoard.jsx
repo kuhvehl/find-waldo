@@ -49,7 +49,6 @@ const GameBoard = () => {
     setShowCharacterList(false);
     setSelectedCoordinates(null);
 
-    // Optionally, you could also reset after a few seconds
     setTimeout(() => {
       setValidationMessage("");
     }, 2000);
@@ -101,15 +100,15 @@ const GameBoard = () => {
             position: "absolute",
             left: "50%",
             top: "50%",
-            transform: "translate(-50%, -50%)", // Center the message
+            transform: "translate(-50%, -50%)",
             backgroundColor: "white",
             borderRadius: "8px",
             padding: "10px 15px",
             boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
             fontSize: "18px",
             fontWeight: "bold",
-            zIndex: 1000, // Ensure it's on top of other elements
-            textAlign: "center", // Center the text
+            zIndex: 1000,
+            textAlign: "center",
           }}
         >
           {validationMessage}
