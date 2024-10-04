@@ -1,4 +1,3 @@
-/* CharacterList.css */
 .character-list {
   background-color: white;
   border: 2px solid #ccc;
@@ -34,4 +33,23 @@
 
 .character-list button:hover {
   background-color: #e0e0e0;
+}
+
+/* Close button specific styles */
+#close-button {
+  width: 100%;
+  padding: 8px 12px;
+  margin: 10px 0 0 0; /* Slightly larger margin on top for spacing */
+  background-color: #ff6b6b; /* Distinct red color */
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+#close-button:hover {
+  background-color: #ff4c4c; /* Darker red on hover */
+  transform: scale(1.05); /* Slight grow effect */
 }

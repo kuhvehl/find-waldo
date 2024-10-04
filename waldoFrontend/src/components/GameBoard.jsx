@@ -24,6 +24,11 @@ const GameBoard = () => {
     setShowCharacterList(false);
   };
 
+  const handleCancel = () => {
+    setShowCharacterList(false);
+    setSelectedCoordinates(null); // Hide the red circle as well
+  };
+
   return (
     <div className="game-board" style={{ position: "relative" }}>
       <img
@@ -50,6 +55,7 @@ const GameBoard = () => {
         <CharacterList
           characters={characters}
           onSelectCharacter={handleCharacterSelect}
+          onCancel={handleCancel}
           style={{
             position: "absolute",
             left: `${selectedCoordinates.x + 30}px`,
