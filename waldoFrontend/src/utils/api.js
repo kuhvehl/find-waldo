@@ -54,7 +54,6 @@ export const validateSelection = async (
 
 export const fetchCharacters = async (gameSessionId) => {
   try {
-    // If gameSessionId is provided, append it as a query parameter
     const url = gameSessionId
       ? `${API_BASE_URL}/characters?gameSessionId=${gameSessionId}`
       : `${API_BASE_URL}/characters`;
@@ -65,7 +64,7 @@ export const fetchCharacters = async (gameSessionId) => {
       throw new Error("Failed to fetch characters");
     }
 
-    return await response.json(); // Assuming the response is an array of characters
+    return await response.json();
   } catch (error) {
     console.error("Error fetching characters:", error);
     throw error;

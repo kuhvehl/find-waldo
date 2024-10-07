@@ -14,9 +14,8 @@ const GameBoard = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [gameSessionId, setGameSessionId] = useState(null);
   const [guesses, setGuesses] = useState([]);
-  const [characters, setCharacters] = useState([]); // Add state for characters
+  const [characters, setCharacters] = useState([]);
 
-  // Fetch characters on component mount
   useEffect(() => {
     const loadCharacters = async () => {
       try {
@@ -28,7 +27,7 @@ const GameBoard = () => {
     };
 
     loadCharacters();
-  }, []); // Empty dependency array to run only once on mount
+  }, []);
 
   const handleImageClick = (event) => {
     if (!gameStarted) return;
