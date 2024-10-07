@@ -10,6 +10,21 @@ const prisma = new PrismaClient();
 app.use(cors());
 app.use(bodyParser.json());
 
+app.post("/api/game-sessions", async (req, res) => {
+  try {
+    const gameSession = await prisma.gameSession.create({
+      data: {
+        startTime: new Date(),
+      },
+    });
+    res.json(gameSession);
+    console.log("success");
+  } catch (error) {
+    console.error("Error creating game session:", error);
+    res.status(500).json({ error: "Failed to create game session" });
+  }
+});
+
 // Validation endpoint
 app.post("/api/validate", async (req, res) => {
   console.log(req.body);

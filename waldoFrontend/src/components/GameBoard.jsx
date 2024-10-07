@@ -1,6 +1,7 @@
 import { useState } from "react";
 import CharacterList from "./CharacterList";
-import { validateSelection } from "../utils/api";
+import StartGameModal from "./StartGameModal";
+import { validateSelection, createGameSession } from "../utils/api"; // Add API call for game session
 
 const characterCoordinates = {
   Sauron: "",
@@ -12,10 +13,12 @@ const GameBoard = () => {
   const [selectedCoordinates, setSelectedCoordinates] = useState(null);
   const [showCharacterList, setShowCharacterList] = useState(false);
   const [validationMessage, setValidationMessage] = useState("");
+  const [gameStarted, setGameStarted] = useState(false); // New state to track game start
 
   const characters = Object.keys(characterCoordinates);
 
   const handleImageClick = (event) => {
+    if (!gameStarted) return; // Ensure clicks are allowed only after the game starts
     const img = event.target;
     const rect = img.getBoundingClientRect();
     const x = event.clientX - rect.left;
@@ -65,8 +68,20 @@ const GameBoard = () => {
     setSelectedCoordinates(null);
   };
 
+  // API call to start a new game session
+  const startGame = async () => {
+    try {
+      await createGameSession(); // API call to backend
+      setGameStarted(true); // Hide modal and start game
+    } catch (error) {
+      console.log("Failed to start game session:", error);
+    }
+  };
+
   return (
     <div className="game-board" style={{ position: "relative" }}>
+      {!gameStarted && <StartGameModal onStartGame={startGame} />}{" "}
+      {/* Show modal if game not started */}
       <img
         src="/src/assets/find-sauron.jpeg"
         alt="Find Sauron"
