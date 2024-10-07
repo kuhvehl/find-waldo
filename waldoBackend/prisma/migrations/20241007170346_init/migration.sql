@@ -1,18 +1,8 @@
 -- CreateTable
-CREATE TABLE "User" (
-    "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
-    "score" INTEGER NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Character" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
-    "imageUrl" TEXT,
+    "imageUrl" TEXT NOT NULL,
 
     CONSTRAINT "Character_pkey" PRIMARY KEY ("id")
 );
@@ -31,7 +21,7 @@ CREATE TABLE "Location" (
 -- CreateTable
 CREATE TABLE "GameSession" (
     "id" SERIAL NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "user" TEXT,
     "startTime" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "endTime" TIMESTAMP(3),
     "duration" INTEGER,
@@ -45,6 +35,8 @@ CREATE TABLE "CharacterSelection" (
     "id" SERIAL NOT NULL,
     "gameSessionId" INTEGER NOT NULL,
     "characterId" INTEGER NOT NULL,
+    "x" DOUBLE PRECISION NOT NULL,
+    "y" DOUBLE PRECISION NOT NULL,
     "isCorrect" BOOLEAN NOT NULL,
     "selectedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -54,11 +46,11 @@ CREATE TABLE "CharacterSelection" (
 -- CreateIndex
 CREATE UNIQUE INDEX "Character_name_key" ON "Character"("name");
 
--- AddForeignKey
-ALTER TABLE "Location" ADD CONSTRAINT "Location_characterId_fkey" FOREIGN KEY ("characterId") REFERENCES "Character"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+-- CreateIndex
+CREATE UNIQUE INDEX "Location_characterId_x_y_key" ON "Location"("characterId", "x", "y");
 
 -- AddForeignKey
-ALTER TABLE "GameSession" ADD CONSTRAINT "GameSession_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Location" ADD CONSTRAINT "Location_characterId_fkey" FOREIGN KEY ("characterId") REFERENCES "Character"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "CharacterSelection" ADD CONSTRAINT "CharacterSelection_gameSessionId_fkey" FOREIGN KEY ("gameSessionId") REFERENCES "GameSession"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

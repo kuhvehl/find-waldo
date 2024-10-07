@@ -42,6 +42,8 @@ model CharacterSelection {
   gameSessionId Int
   character     Character   @relation(fields: [characterId], references: [id])
   characterId   Int
+  x             Float
+  y             Float
   isCorrect     Boolean
   selectedAt    DateTime    @default(now())
 }

@@ -15,6 +15,7 @@ const GameBoard = () => {
   const [validationMessage, setValidationMessage] = useState("");
   const [gameStarted, setGameStarted] = useState(false); // New state to track game start
   const [gameSessionId, setGameSessionId] = useState(null); // Store game session ID
+  const [guesses, setGuesses] = useState([]);
 
   const characters = Object.keys(characterCoordinates);
 
@@ -47,7 +48,16 @@ const GameBoard = () => {
           selectedCoordinates,
           gameSessionId // Pass the gameSessionId to the backend
         );
-        if (response.isCorrect) {
+
+        // Get the updated guesses from the backend
+        const updatedSelections = response.updatedSelections;
+
+        // Update frontend to display the guesses
+        setGuesses(updatedSelections); // Store the updated guesses in state
+
+        // Update validation message based on the correctness of the last guess
+        const lastSelection = updatedSelections[updatedSelections.length - 1];
+        if (lastSelection.isCorrect) {
           setValidationMessage("Correct! You found the character.");
         } else {
           setValidationMessage("Incorrect! Try again.");
@@ -93,6 +103,27 @@ const GameBoard = () => {
         onClick={handleImageClick}
         style={{ cursor: "crosshair", maxWidth: "100%" }}
       />
+      {/* Display guesses on the game board */}
+      {guesses.map((guess, index) => (
+        <div
+          key={index}
+          style={{
+            position: "absolute",
+            left: `calc(${guess.x}% - 15px)`,
+            top: `calc(${guess.y}% - 15px)`,
+            width: "30px",
+            height: "30px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "transparent",
+            borderRadius: "50%",
+            fontSize: "24px",
+          }}
+        >
+          {guess.isCorrect ? "✅" : "❌"}
+        </div>
+      ))}
       {selectedCoordinates && (
         <div
           style={{

@@ -1,5 +1,3 @@
-// src/utils/api.js
-
 const API_BASE_URL = "http://localhost:3000/api";
 
 export const createGameSession = async () => {
@@ -15,11 +13,9 @@ export const createGameSession = async () => {
       throw new Error("Failed to create game session");
     }
 
-    const gameSessionId = await response.json(); // Get the gameSessionId directly
-    console.log("Raw response:", response);
-    console.log("Parsed data:", gameSessionId); // Log the gameSessionId directly
+    const gameSessionId = await response.json();
 
-    return gameSessionId; // Return the ID directly
+    return gameSessionId;
   } catch (error) {
     console.error("Error in createGameSession:", error);
     throw error;
@@ -41,7 +37,7 @@ export const validateSelection = async (
         character,
         x: coordinates.xPercent,
         y: coordinates.yPercent,
-        gameSessionId, // Include gameSessionId in the request body
+        gameSessionId,
       }),
     });
 
