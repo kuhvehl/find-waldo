@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import CharacterList from "./CharacterList";
 import StartGameModal from "./StartGameModal";
+import NameModal from "./NameModal";
 import {
   validateSelection,
   createGameSession,
@@ -16,12 +17,25 @@ const GameBoard = () => {
   const [gameSessionId, setGameSessionId] = useState(null);
   const [guesses, setGuesses] = useState([]);
   const [characters, setCharacters] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const handleNameSubmit = (name) => {
+    console.log("Name submitted:", name);
+    setIsModalVisible(false);
+    setGameSessionId("");
+  };
+
+  useEffect(() => {
+    if (gameSessionId && !gameStarted) {
+      setIsModalVisible(true);
+    }
+  }, [gameSessionId, gameStarted]);
 
   useEffect(() => {
     const loadCharacters = async () => {
       try {
         const characterData = await fetchCharacters();
-        setCharacters(characterData); // Set fetched characters
+        setCharacters(characterData);
       } catch (error) {
         console.error("Error loading characters:", error);
       }
@@ -68,10 +82,10 @@ const GameBoard = () => {
         const availableCharacters = await fetchCharacters(gameSessionId);
         setCharacters(availableCharacters);
 
-        // If all characters have been found, end the game
         if (availableCharacters.length === 0) {
-          await endGameSession(gameSessionId); // Call backend to end the game
+          await endGameSession(gameSessionId);
           setValidationMessage("Game completed!");
+          setGameStarted(false);
         } else {
           const lastSelection = updatedSelections[updatedSelections.length - 1];
           if (lastSelection.isCorrect) {
@@ -105,6 +119,9 @@ const GameBoard = () => {
       setGameSessionId(gameSessionId);
       console.log("Game Session ID:", gameSessionId);
       setGameStarted(true);
+      const characterData = await fetchCharacters();
+      setGuesses([]);
+      setCharacters(characterData);
     } catch (error) {
       console.log("Failed to start game session:", error);
     }
@@ -112,7 +129,10 @@ const GameBoard = () => {
 
   return (
     <div className="game-board" style={{ position: "relative" }}>
-      {!gameStarted && <StartGameModal onStartGame={startGame} />}{" "}
+      <NameModal onSubmit={handleNameSubmit} isVisible={isModalVisible} />
+      {!gameStarted && !gameSessionId && (
+        <StartGameModal onStartGame={startGame} />
+      )}{" "}
       <img
         src="/src/assets/find-sauron.jpeg"
         alt="Find Sauron"
