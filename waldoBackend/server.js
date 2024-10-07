@@ -17,20 +17,18 @@ app.post("/api/game-sessions", async (req, res) => {
         startTime: new Date(),
       },
     });
-    res.json(gameSession);
-    console.log("success");
+    console.log(gameSession);
+    res.json(gameSession.id);
   } catch (error) {
-    console.error("Error creating game session:", error);
     res.status(500).json({ error: "Failed to create game session" });
   }
 });
 
-// Validation endpoint
 app.post("/api/validate", async (req, res) => {
   console.log(req.body);
-  const { character, x, y } = req.body;
+  const { character, x, y, gameSessionId } = req.body;
 
-  if (!character || x === undefined || y === undefined) {
+  if (!character || x === undefined || y === undefined || !gameSessionId) {
     return res.status(400).json({ error: "Missing required parameters" });
   }
 
@@ -44,6 +42,7 @@ app.post("/api/validate", async (req, res) => {
       return res.status(404).json({ error: "Character not found" });
     }
 
+    // Calculate if the selected location is correct
     const isCorrect = characterData.locations.some((location) => {
       const distance = Math.sqrt(
         Math.pow(x - location.x, 2) + Math.pow(y - location.y, 2)
@@ -51,6 +50,17 @@ app.post("/api/validate", async (req, res) => {
       return distance <= location.radius;
     });
 
+    // Record the selection in the database
+    await prisma.characterSelection.create({
+      data: {
+        gameSessionId: gameSessionId,
+        characterId: characterData.id,
+        isCorrect: isCorrect,
+        selectedAt: new Date(), // Optional, it defaults to `now()`
+      },
+    });
+
+    // Respond with the validation result
     res.json({ isCorrect });
   } catch (error) {
     console.error("Error validating character location:", error);

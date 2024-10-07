@@ -14,6 +14,7 @@ const GameBoard = () => {
   const [showCharacterList, setShowCharacterList] = useState(false);
   const [validationMessage, setValidationMessage] = useState("");
   const [gameStarted, setGameStarted] = useState(false); // New state to track game start
+  const [gameSessionId, setGameSessionId] = useState(null); // Store game session ID
 
   const characters = Object.keys(characterCoordinates);
 
@@ -35,14 +36,16 @@ const GameBoard = () => {
   const handleCharacterSelect = async (character) => {
     console.log(
       `Selected character: ${character} at normalized coordinates:`,
-      selectedCoordinates
+      selectedCoordinates,
+      gameSessionId
     );
 
-    if (selectedCoordinates) {
+    if (selectedCoordinates && gameSessionId) {
       try {
         const response = await validateSelection(
           character,
-          selectedCoordinates
+          selectedCoordinates,
+          gameSessionId // Pass the gameSessionId to the backend
         );
         if (response.isCorrect) {
           setValidationMessage("Correct! You found the character.");
@@ -71,7 +74,9 @@ const GameBoard = () => {
   // API call to start a new game session
   const startGame = async () => {
     try {
-      await createGameSession(); // API call to backend
+      const gameSessionId = await createGameSession(); // Get the ID directly
+      setGameSessionId(gameSessionId); // Store the gameSessionId in state
+      console.log("Game Session ID:", gameSessionId); // Log the gameSessionId to verify
       setGameStarted(true); // Hide modal and start game
     } catch (error) {
       console.log("Failed to start game session:", error);

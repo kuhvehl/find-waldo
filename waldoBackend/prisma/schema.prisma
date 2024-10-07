@@ -44,6 +44,4 @@ model CharacterSelection {
   characterId   Int
   isCorrect     Boolean
   selectedAt    DateTime    @default(now())
-
-  @@unique([gameSessionId, characterId])
 }
