@@ -154,30 +154,24 @@ app.put("/api/game-sessions/:id", async (req, res) => {
   }
 });
 
-app.get("/api/high-scores", async (req, res) => {
+app.get("/api/game-sessions/top-scores", async (req, res) => {
   try {
-    // Fetch the top 10 game sessions sorted by the shortest duration
-    const topGameSessions = await prisma.gameSession.findMany({
-      where: {
-        completed: true, // Only consider completed game sessions
-        duration: { not: null }, // Make sure duration is available
-      },
+    const topScores = await prisma.gameSession.findMany({
       orderBy: {
-        duration: "asc", // Sort by duration in ascending order (fastest first)
+        duration: "asc",
       },
-      take: 10, // Limit the result to the top 10
+      take: 10,
       select: {
-        user: true, // Return the user's name
-        duration: true, // Return the game duration
-        startTime: true, // Optionally return startTime and endTime
+        user: true,
+        startTime: true,
         endTime: true,
+        duration: true,
       },
     });
-
-    res.json(topGameSessions);
+    res.json(topScores);
   } catch (error) {
-    console.error("Error fetching high scores:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error fetching top scores:", error);
+    res.status(500).json({ error: "Failed to fetch top scores" });
   }
 });
 

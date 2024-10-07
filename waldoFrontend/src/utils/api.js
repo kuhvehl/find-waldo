@@ -117,3 +117,16 @@ export const updateGameSessionUser = async (gameSessionId, userName) => {
     throw error;
   }
 };
+
+export const fetchTopScores = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/game-sessions/top-scores`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch top scores");
+    }
+    return await response.json(); // Return the array of top scores
+  } catch (error) {
+    console.error("Error fetching top scores:", error);
+    throw error;
+  }
+};
