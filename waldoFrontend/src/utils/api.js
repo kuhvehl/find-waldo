@@ -52,9 +52,14 @@ export const validateSelection = async (
   }
 };
 
-export const fetchCharacters = async () => {
+export const fetchCharacters = async (gameSessionId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/characters`);
+    // If gameSessionId is provided, append it as a query parameter
+    const url = gameSessionId
+      ? `${API_BASE_URL}/characters?gameSessionId=${gameSessionId}`
+      : `${API_BASE_URL}/characters`;
+
+    const response = await fetch(url);
 
     if (!response.ok) {
       throw new Error("Failed to fetch characters");

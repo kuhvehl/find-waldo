@@ -61,8 +61,12 @@ const GameBoard = () => {
         );
 
         const updatedSelections = response.updatedSelections;
+        console.log(updatedSelections);
 
         setGuesses(updatedSelections);
+
+        const availableCharacters = await fetchCharacters(gameSessionId);
+        setCharacters(availableCharacters);
 
         const lastSelection = updatedSelections[updatedSelections.length - 1];
         if (lastSelection.isCorrect) {

@@ -24,10 +24,35 @@ app.post("/api/game-sessions", async (req, res) => {
 });
 
 app.get("/api/characters", async (req, res) => {
+  const { gameSessionId } = req.query; // Expecting gameSessionId as a query parameter
+
   try {
-    const characters = await prisma.character.findMany();
-    console.log(characters);
-    res.json(characters);
+    // Fetch all characters
+    const allCharacters = await prisma.character.findMany();
+
+    if (!gameSessionId) {
+      // If no gameSessionId is provided, return all characters
+      return res.json(allCharacters);
+    }
+
+    // Fetch character selections for the provided game session
+    const selectedCharacters = await prisma.characterSelection.findMany({
+      where: { gameSessionId: parseInt(gameSessionId) }, // Ensure gameSessionId is an integer
+      select: { characterId: true },
+    });
+
+    // Extract character IDs that have already been selected
+    const selectedCharacterIds = selectedCharacters.map(
+      (selection) => selection.characterId
+    );
+
+    // Filter out selected characters
+    const availableCharacters = allCharacters.filter(
+      (character) => !selectedCharacterIds.includes(character.id)
+    );
+
+    console.log(availableCharacters);
+    res.json(availableCharacters);
   } catch (error) {
     console.error("Error fetching characters:", error);
     res.status(500).json({ error: "Internal server error" });
