@@ -137,6 +137,50 @@ app.patch("/api/game-sessions/:id/end", async (req, res) => {
   }
 });
 
+app.put("/api/game-sessions/:id", async (req, res) => {
+  const { id } = req.params;
+  const { user } = req.body;
+
+  try {
+    const updatedGameSession = await prisma.gameSession.update({
+      where: { id: parseInt(id) },
+      data: { user },
+    });
+
+    res.json(updatedGameSession);
+  } catch (error) {
+    console.error("Error updating game session:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/api/high-scores", async (req, res) => {
+  try {
+    // Fetch the top 10 game sessions sorted by the shortest duration
+    const topGameSessions = await prisma.gameSession.findMany({
+      where: {
+        completed: true, // Only consider completed game sessions
+        duration: { not: null }, // Make sure duration is available
+      },
+      orderBy: {
+        duration: "asc", // Sort by duration in ascending order (fastest first)
+      },
+      take: 10, // Limit the result to the top 10
+      select: {
+        user: true, // Return the user's name
+        duration: true, // Return the game duration
+        startTime: true, // Optionally return startTime and endTime
+        endTime: true,
+      },
+    });
+
+    res.json(topGameSessions);
+  } catch (error) {
+    console.error("Error fetching high scores:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

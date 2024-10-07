@@ -93,3 +93,27 @@ export const endGameSession = async (gameSessionId) => {
     throw error;
   }
 };
+
+export const updateGameSessionUser = async (gameSessionId, userName) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/game-sessions/${gameSessionId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user: userName }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to update game session with name");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating game session:", error);
+    throw error;
+  }
+};

@@ -7,6 +7,7 @@ import {
   createGameSession,
   fetchCharacters,
   endGameSession,
+  updateGameSessionUser,
 } from "../utils/api";
 
 const GameBoard = () => {
@@ -19,10 +20,25 @@ const GameBoard = () => {
   const [characters, setCharacters] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleNameSubmit = (name) => {
+  const handleNameSubmit = async (name) => {
     console.log("Name submitted:", name);
-    setIsModalVisible(false);
-    setGameSessionId("");
+
+    if (gameSessionId) {
+      try {
+        const updatedGameSession = await updateGameSessionUser(
+          gameSessionId,
+          name
+        );
+        console.log("Updated Game Session:", updatedGameSession);
+
+        setIsModalVisible(false);
+        setGameSessionId("");
+      } catch (error) {
+        console.error("Error updating game session:", error);
+      }
+    } else {
+      console.error("No Game Session ID available");
+    }
   };
 
   useEffect(() => {
