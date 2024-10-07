@@ -105,6 +105,38 @@ app.post("/api/validate", async (req, res) => {
   }
 });
 
+app.patch("/api/game-sessions/:id/end", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const gameSession = await prisma.gameSession.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!gameSession) {
+      return res.status(404).json({ error: "Game session not found" });
+    }
+
+    const endTime = new Date();
+    const duration = Math.floor((endTime - gameSession.startTime) / 1000); // Duration in seconds
+
+    // Update the game session with endTime, duration, and completed status
+    const updatedGameSession = await prisma.gameSession.update({
+      where: { id: parseInt(id) },
+      data: {
+        completed: true,
+        endTime,
+        duration,
+      },
+    });
+
+    res.json(updatedGameSession);
+  } catch (error) {
+    console.error("Error ending game session:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

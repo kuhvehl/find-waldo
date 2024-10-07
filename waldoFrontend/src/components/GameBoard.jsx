@@ -5,6 +5,7 @@ import {
   validateSelection,
   createGameSession,
   fetchCharacters,
+  endGameSession,
 } from "../utils/api";
 
 const GameBoard = () => {
@@ -67,11 +68,17 @@ const GameBoard = () => {
         const availableCharacters = await fetchCharacters(gameSessionId);
         setCharacters(availableCharacters);
 
-        const lastSelection = updatedSelections[updatedSelections.length - 1];
-        if (lastSelection.isCorrect) {
-          setValidationMessage("Correct! You found the character.");
+        // If all characters have been found, end the game
+        if (availableCharacters.length === 0) {
+          await endGameSession(gameSessionId); // Call backend to end the game
+          setValidationMessage("Game completed!");
         } else {
-          setValidationMessage("Incorrect! Try again.");
+          const lastSelection = updatedSelections[updatedSelections.length - 1];
+          if (lastSelection.isCorrect) {
+            setValidationMessage("Correct! You found the character.");
+          } else {
+            setValidationMessage("Incorrect! Try again.");
+          }
         }
       } catch (error) {
         console.log(error);

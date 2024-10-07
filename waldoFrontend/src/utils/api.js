@@ -70,3 +70,26 @@ export const fetchCharacters = async (gameSessionId) => {
     throw error;
   }
 };
+
+export const endGameSession = async (gameSessionId) => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/game-sessions/${gameSessionId}/end`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to end the game session");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error in endGameSession:", error);
+    throw error;
+  }
+};
