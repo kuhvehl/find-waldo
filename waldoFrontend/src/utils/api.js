@@ -51,3 +51,18 @@ export const validateSelection = async (
     throw error;
   }
 };
+
+export const fetchCharacters = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/characters`);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch characters");
+    }
+
+    return await response.json(); // Assuming the response is an array of characters
+  } catch (error) {
+    console.error("Error fetching characters:", error);
+    throw error;
+  }
+};

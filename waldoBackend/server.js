@@ -17,15 +17,24 @@ app.post("/api/game-sessions", async (req, res) => {
         startTime: new Date(),
       },
     });
-    console.log(gameSession);
     res.json(gameSession.id);
   } catch (error) {
     res.status(500).json({ error: "Failed to create game session" });
   }
 });
 
+app.get("/api/characters", async (req, res) => {
+  try {
+    const characters = await prisma.character.findMany();
+    console.log(characters);
+    res.json(characters);
+  } catch (error) {
+    console.error("Error fetching characters:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.post("/api/validate", async (req, res) => {
-  console.log(req.body);
   const { character, x, y, gameSessionId } = req.body;
 
   if (!character || x === undefined || y === undefined || !gameSessionId) {

@@ -8,8 +8,8 @@ const CharacterList = ({ characters, onSelectCharacter, onCancel, style }) => {
       <ul>
         {characters.map((character, index) => (
           <li key={index}>
-            <button onClick={() => onSelectCharacter(character)}>
-              {character}
+            <button onClick={() => onSelectCharacter(character.name)}>
+              {character.name}
             </button>
           </li>
         ))}

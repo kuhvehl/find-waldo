@@ -1,26 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CharacterList from "./CharacterList";
 import StartGameModal from "./StartGameModal";
-import { validateSelection, createGameSession } from "../utils/api"; // Add API call for game session
-
-const characterCoordinates = {
-  Sauron: "",
-  Frodo: "",
-  Nazgûl: "",
-};
+import {
+  validateSelection,
+  createGameSession,
+  fetchCharacters,
+} from "../utils/api";
 
 const GameBoard = () => {
   const [selectedCoordinates, setSelectedCoordinates] = useState(null);
   const [showCharacterList, setShowCharacterList] = useState(false);
   const [validationMessage, setValidationMessage] = useState("");
-  const [gameStarted, setGameStarted] = useState(false); // New state to track game start
-  const [gameSessionId, setGameSessionId] = useState(null); // Store game session ID
+  const [gameStarted, setGameStarted] = useState(false);
+  const [gameSessionId, setGameSessionId] = useState(null);
   const [guesses, setGuesses] = useState([]);
+  const [characters, setCharacters] = useState([]); // Add state for characters
 
-  const characters = Object.keys(characterCoordinates);
+  // Fetch characters on component mount
+  useEffect(() => {
+    const loadCharacters = async () => {
+      try {
+        const characterData = await fetchCharacters();
+        setCharacters(characterData); // Set fetched characters
+      } catch (error) {
+        console.error("Error loading characters:", error);
+      }
+    };
+
+    loadCharacters();
+  }, []); // Empty dependency array to run only once on mount
 
   const handleImageClick = (event) => {
-    if (!gameStarted) return; // Ensure clicks are allowed only after the game starts
+    if (!gameStarted) return;
     const img = event.target;
     const rect = img.getBoundingClientRect();
     const x = event.clientX - rect.left;
@@ -46,16 +57,13 @@ const GameBoard = () => {
         const response = await validateSelection(
           character,
           selectedCoordinates,
-          gameSessionId // Pass the gameSessionId to the backend
+          gameSessionId
         );
 
-        // Get the updated guesses from the backend
         const updatedSelections = response.updatedSelections;
 
-        // Update frontend to display the guesses
-        setGuesses(updatedSelections); // Store the updated guesses in state
+        setGuesses(updatedSelections);
 
-        // Update validation message based on the correctness of the last guess
         const lastSelection = updatedSelections[updatedSelections.length - 1];
         if (lastSelection.isCorrect) {
           setValidationMessage("Correct! You found the character.");
@@ -81,13 +89,12 @@ const GameBoard = () => {
     setSelectedCoordinates(null);
   };
 
-  // API call to start a new game session
   const startGame = async () => {
     try {
-      const gameSessionId = await createGameSession(); // Get the ID directly
-      setGameSessionId(gameSessionId); // Store the gameSessionId in state
-      console.log("Game Session ID:", gameSessionId); // Log the gameSessionId to verify
-      setGameStarted(true); // Hide modal and start game
+      const gameSessionId = await createGameSession();
+      setGameSessionId(gameSessionId);
+      console.log("Game Session ID:", gameSessionId);
+      setGameStarted(true);
     } catch (error) {
       console.log("Failed to start game session:", error);
     }
@@ -96,14 +103,12 @@ const GameBoard = () => {
   return (
     <div className="game-board" style={{ position: "relative" }}>
       {!gameStarted && <StartGameModal onStartGame={startGame} />}{" "}
-      {/* Show modal if game not started */}
       <img
         src="/src/assets/find-sauron.jpeg"
         alt="Find Sauron"
         onClick={handleImageClick}
         style={{ cursor: "crosshair", maxWidth: "100%" }}
       />
-      {/* Display guesses on the game board */}
       {guesses.map((guess, index) => (
         <div
           key={index}
