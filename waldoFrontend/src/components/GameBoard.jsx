@@ -139,7 +139,7 @@ const GameBoard = () => {
         <StartGameModal onStartGame={startGame} />
       )}{" "}
       <img
-        src="/src/assets/find-sauron.jpeg"
+        src="/find-sauron.jpeg"
         alt="Find Sauron"
         onClick={handleImageClick}
         style={{ cursor: "crosshair", maxWidth: "100%" }}
