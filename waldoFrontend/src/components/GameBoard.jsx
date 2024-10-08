@@ -21,15 +21,13 @@ const GameBoard = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const handleNameSubmit = async (name) => {
-    console.log("Name submitted:", name);
-
     if (gameSessionId) {
       try {
+        // eslint-disable-next-line no-unused-vars
         const updatedGameSession = await updateGameSessionUser(
           gameSessionId,
           name
         );
-        console.log("Updated Game Session:", updatedGameSession);
 
         setIsModalVisible(false);
         setGameSessionId("");
@@ -76,12 +74,6 @@ const GameBoard = () => {
   };
 
   const handleCharacterSelect = async (character) => {
-    console.log(
-      `Selected character: ${character} at normalized coordinates:`,
-      selectedCoordinates,
-      gameSessionId
-    );
-
     if (selectedCoordinates && gameSessionId) {
       try {
         const response = await validateSelection(
@@ -91,8 +83,6 @@ const GameBoard = () => {
         );
 
         const updatedSelections = response.updatedSelections;
-        console.log(updatedSelections);
-
         setGuesses(updatedSelections);
 
         const availableCharacters = await fetchCharacters(gameSessionId);
@@ -133,7 +123,6 @@ const GameBoard = () => {
     try {
       const gameSessionId = await createGameSession();
       setGameSessionId(gameSessionId);
-      console.log("Game Session ID:", gameSessionId);
       setGameStarted(true);
       const characterData = await fetchCharacters();
       setGuesses([]);

@@ -157,6 +157,9 @@ app.put("/api/game-sessions/:id", async (req, res) => {
 app.get("/api/game-sessions/top-scores", async (req, res) => {
   try {
     const topScores = await prisma.gameSession.findMany({
+      where: {
+        completed: true, // Filter for completed games only
+      },
       orderBy: {
         duration: "asc",
       },
