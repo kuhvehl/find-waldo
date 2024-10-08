@@ -47,7 +47,7 @@ const StartGameModal = ({ onStartGame }) => {
         }}
       >
         <h2>Find Frodo, Sauron, and The Nazgûl</h2>
-        <h3>Top 10 Fastest Players</h3>
+        <h3>Fastest Players</h3>
         <div
           style={{
             display: "grid",
